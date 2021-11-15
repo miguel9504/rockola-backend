@@ -12,17 +12,46 @@ const obtenerCanciones = (req, res) => {
     })
 }
 const obtenerCancion = async (req, res) => {
-    const response = await executeQuery(`SELECT * FROM canciones WHERE id = ${req.params.id}`)
-    res.send(response);
+
+    const { id } = req.params;
+    try{
+        const response = await executeQuery(`SELECT * FROM canciones WHERE id = ${id}`)
+        res.send(response);
+    }catch(error){
+        console.log(error);
+        res.status(500).send(error);
+    }
 }
-const agregarCancion = (req, res) => {
-    res.send('agregar canciones');
+const agregarCancion = async (req, res) => {
+    const { nombre, artista, album, duracion } = req.body;
+    try{
+        const response = await executeQuery(`INSERT INTO canciones (Nombre, Artista, Album, Duracion) VALUES  ('${nombre}','${artista}', '${album}', '${duracion}')`)
+        res.send(response);
+    }catch(error){
+        console.log(error);
+        res.status(500).send(error);
+    }
 }
-const actualizarCancion = (req, res) => {
-    res.send('actualizar canciones');
+const actualizarCancion = async (req, res) => {
+    const { nombre, artista, album, duracion } = req.body;
+    const { id } = req.params;
+    try{
+        const response = await executeQuery(`UPDATE canciones SET Nombre='${nombre}',Artista='${artista}',Album='${album}',Duracion='${duracion}' WHERE id = '${id}'`)
+        res.json({message: response.affectedRows > 0 ? 'updated' : 'no se encontro el id'});
+    }catch(error){
+        console.log(error);
+        res.status(500).send(error);
+    }
 }
-const eliminarCancioncion = (req, res) => {
-    res.send('eliminar canciones');
+const eliminarCancioncion = async (req, res) => {
+    const { id } = req.params;
+    try{
+        const response = await executeQuery(`DELETE FROM canciones WHERE id = '${id}'`)
+        res.json({message: response.affectedRows > 0 ? 'deleted' : 'no se encontro el id'});
+    }catch(error){
+        console.log(error);
+        res.status(500).send(error);
+    }
 }
 
 export { obtenerCanciones, obtenerCancion, agregarCancion, actualizarCancion,eliminarCancioncion };
